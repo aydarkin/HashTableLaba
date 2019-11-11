@@ -102,9 +102,10 @@ namespace siakod1
                 {
                     this.IncCountAttempt(); //+1 проба
                     //если ячейка таблицы свободна, то вносим значение элемента
-                    if (Table[index] == null)
+                    if (Table[index] == null || Deleted[index])
                     {
                         Table[index] = key;
+                        Deleted[index] = false;
                         if(IsLog)
                             Console.WriteLine($"[Добавление]В таблицу вносится ключ {key} по индексу {index}");
                         break;
@@ -211,85 +212,109 @@ namespace siakod1
 
 
 
-            while (true)
+while (true)
+{
+    Console.WriteLine("Хэш-таблица:");
+    hashTable.PrintTable();
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine("Интерактивный режим");
+    Console.WriteLine("1.Добавить ключ");
+    Console.WriteLine("2.Найти индекс по ключу");
+    Console.WriteLine("3.Удалить ключ");
+    Console.WriteLine("4.Заменить один ключ другим");
+    Console.WriteLine("5.Вывести параметры");
+    Console.WriteLine("0.Выход");
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine();
+    Console.Write("Выбор режима: ");
+    var mode = Console.ReadLine();
+    int key1, key2;
+    string str;
+    switch (mode[0])
+    {
+        case '1':
+            Console.WriteLine("1.Свой ключ");
+            Console.WriteLine("2.Диапазон случайных");
+            Console.WriteLine();
+            Console.Write("Выбор режима: ");
+            mode = Console.ReadLine();
+            switch (mode[0])
             {
-                Console.WriteLine("Хэш-таблица:");
-                hashTable.PrintTable();
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("Интерактивный режим");
-                Console.WriteLine("1.Добавить ключ");
-                Console.WriteLine("2.Найти индекс по ключу");
-                Console.WriteLine("3.Удалить ключ");
-                Console.WriteLine("4.Заменить один ключ другим");
-                Console.WriteLine("5.Вывести параметры");
-                Console.WriteLine("0.Выход");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine();
-                Console.WriteLine("Выбор режима: ");
-                var mode = Console.ReadLine();
-                int key1, key2;
-                string str;
-                switch (mode[0])
-                {
-                    case '1':
-                        Console.WriteLine();
-                        Console.Write("Введите ключ = ");
-                        str = Console.ReadLine();
-                        if(!int.TryParse(str, out key1))
-                            break;
-                        if(hashTable.Add(key1))
+                case '1':
+                    Console.WriteLine();
+                    Console.Write("Введите ключ = ");
+                    str = Console.ReadLine();
+                    if (!int.TryParse(str, out key1))
+                        break;
+                    if (hashTable.Add(key1))
+                        NumberElements++;
+                    Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
+                    Console.ReadKey();
+                    break;
+                case '2':
+                    Console.WriteLine();
+                    Console.Write("Сколько ключей = ");
+                    str = Console.ReadLine();
+                    if (!int.TryParse(str, out key1) || key1 < 0)
+                        break;
+                    var rand = new Random();
+                    for (int i = 0; i < key1; i++)
+                        if (hashTable.Add(rand.Next(10000, 99999)))
                             NumberElements++;
-                        Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
-                        Console.ReadKey();
-                        break;
-                    case '2':
-                        Console.WriteLine();
-                        Console.Write("Введите ключ = ");
-                        str = Console.ReadLine();
-                        if (!int.TryParse(str, out key1))
-                            break;
-                        hashTable.Find(key1);
-                        Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
-                        Console.ReadKey();
-                        break;
-                    case '3':
-                        Console.Write("Введите ключ = ");
-                        str = Console.ReadLine();
-                        if (!int.TryParse(str, out key1))
-                            break;
-                        if(hashTable.Remove(key1))
-                            NumberElements--;
-                        Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
-                        Console.ReadKey();
-                        break;
-                    case '4':
-                        Console.WriteLine();
-                        Console.Write("Введите ключ для замены = ");
-                        str = Console.ReadLine();
-                        if (!int.TryParse(str, out key1))
-                            break;
-                        Console.Write("Введите ключ чем заменить = ");
-                        str = Console.ReadLine();
-                        if (!int.TryParse(str, out key2))
-                            break;
-                        hashTable.Replace(key1,key2);
-                        Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
-                        Console.ReadKey();
-                        break;
-                    case '5':
-                        Console.WriteLine();
-                        Console.WriteLine("Коэффициент заполнения таблицы = {0:0.000}", (double)hashTable.Occupancy / sizeTable);
-                        Console.WriteLine("Среднее число проб = {0:0.000}", (double)hashTable.CountAttempt / NumberElements);
-                        Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
-                        Console.ReadKey();
-                        break;
-                    case '0':
-                        return;
-                    default:
-                        break;
-                }
+                    Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
+                    Console.ReadKey();
+                    break;
             }
+                        
+            break;
+        case '2':
+            Console.WriteLine();
+            Console.Write("Введите ключ = ");
+            str = Console.ReadLine();
+            if (!int.TryParse(str, out key1))
+                break;
+            hashTable.Find(key1);
+            Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
+            Console.ReadKey();
+            break;
+        case '3':
+            Console.Write("Введите ключ = ");
+            str = Console.ReadLine();
+            if (!int.TryParse(str, out key1))
+                break;
+            if(hashTable.Remove(key1))
+                NumberElements--;
+            Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
+            Console.ReadKey();
+            break;
+        case '4':
+            Console.WriteLine();
+            Console.Write("Введите ключ для замены = ");
+            str = Console.ReadLine();
+            if (!int.TryParse(str, out key1))
+                break;
+            Console.Write("Введите ключ чем заменить = ");
+            str = Console.ReadLine();
+            if (!int.TryParse(str, out key2))
+                break;
+            hashTable.Replace(key1,key2);
+            Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
+            Console.ReadKey();
+            break;
+        case '5':
+            Console.WriteLine();
+            Console.WriteLine("Коэффициент заполнения таблицы = {0:0.000}", (double)hashTable.Occupancy / sizeTable);
+            Console.WriteLine("Среднее число проб = {0:0.000}", (double)hashTable.CountAttempt / NumberElements);
+            Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
+            Console.ReadKey();
+            break;
+        case '0':
+            return;
+        default:
+            break;
+    }
+}
         }        
     }
 }
