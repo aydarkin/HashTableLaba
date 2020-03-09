@@ -15,6 +15,12 @@ namespace siakod1
             public bool[] Deleted;
             public int SizeTable { get { return Table.Length; } }
             public int CountAttempt { get; set; }
+
+            private int addedElements;
+
+            public double AverageCountAttempt { get { return (double)CountAttempt / addedElements; } }
+            public double CoefOccupancy { get { return (double)Occupancy / SizeTable; } }
+
             public bool IsLog { get; set; }
 
             public void IncCountAttempt()
@@ -27,6 +33,7 @@ namespace siakod1
                 Table = new int?[sizeTable];
                 Deleted = new bool[sizeTable];
                 CountAttempt = 0;
+                addedElements = 0;
                 IsLog = isLog;
             }
             public int Hash(int key)
@@ -98,7 +105,7 @@ namespace siakod1
                 var index = this.Hash(key);
                 var index0 = index;
                 var maxAttempt = Occupancy;
-                for (int i = 1; ; i++)
+                for (int i = 1; i < maxAttempt; i++)
                 {
                     this.IncCountAttempt(); //+1 проба
                     //если ячейка таблицы свободна, то вносим значение элемента
@@ -132,6 +139,7 @@ namespace siakod1
                     }
 
                 }
+                addedElements++;
                 return true;
             }
 
@@ -205,8 +213,8 @@ namespace siakod1
 
             Console.WriteLine();
 
-            Console.WriteLine("Коэффициент заполнения таблицы = {0:0.000}", (double)hashTable.Occupancy / sizeTable);
-            Console.WriteLine("Среднее число проб = {0:0.000}", (double)hashTable.CountAttempt / NumberElements);
+            Console.WriteLine("Коэффициент заполнения таблицы = {0:0.000}", hashTable.CoefOccupancy);
+            Console.WriteLine("Среднее число проб = {0:0.000}", hashTable.AverageCountAttempt);
 
             Console.WriteLine();
 
@@ -304,9 +312,9 @@ while (true)
             break;
         case '5':
             Console.WriteLine();
-            Console.WriteLine("Коэффициент заполнения таблицы = {0:0.000}", (double)hashTable.Occupancy / sizeTable);
-            Console.WriteLine("Среднее число проб = {0:0.000}", (double)hashTable.CountAttempt / NumberElements);
-            Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");
+            Console.WriteLine("Коэффициент заполнения таблицы = {0:0.000}", hashTable.CoefOccupancy);
+            Console.WriteLine("Среднее число проб = {0:0.000}", hashTable.AverageCountAttempt);
+            Console.WriteLine("Нажмите любую клавишу, чтобы продолжить");                       
             Console.ReadKey();
             break;
         case '0':
